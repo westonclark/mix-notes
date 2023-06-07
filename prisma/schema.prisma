@@ -11,8 +11,30 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Example {
+
+model Project {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    name String @db.VarChar(255)
+    user String @db.VarChar(255)
+}
+
+model Song {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    songName String @db.VarChar(255)
+    fileName String @db.VarChar(255)
+    projectId String @db.VarChar(255)
+    url String @db.VarChar(255)
+}
+
+model Note {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name String @db.VarChar(255)
+    completed Boolean
+    songId String @db.VarChar(255)
 }
