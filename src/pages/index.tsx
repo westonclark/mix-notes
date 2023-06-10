@@ -22,20 +22,20 @@ import { LoadingSpinner } from "~/components/loading";
 import folder from "../assets/folder.png";
 import addfolder from "../assets/add-folder.png";
 
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 const Home: NextPage = () => {
-  const { user } = useUser();
-  const { data, isLoading } = api.projects.getProjects.useQuery();
-
   const [showCreateProject, setShowCreateProject] = useState(false);
+  const { user } = useUser();
 
+  console.log(user);
+
+  // const { data, isLoading } = api.projects.getProjects.useQuery(user.id);
+  const { data, isLoading } = api.projects.getProjects.useQuery(
+    "user_2QlwdhosB6vn1sn1vG7YySOZmdt"
+  );
+
+  // "user_2QlwdhosB6vn1sn1vG7YySOZmdt";
   if (!data)
     return (
       <div className="flex h-screen items-center justify-center">
@@ -53,7 +53,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className="flex items-center justify-between border-b border-slate-400 bg-scampi-950 p-4">
+      <header className="flex items-center justify-between border-b border-slate-400 p-4">
         <p>MIX NOTES</p>
         <SignedIn>
           {/* Mount the UserButton component */}
@@ -66,18 +66,14 @@ const Home: NextPage = () => {
       </header>
 
       <main className="flex h-screen justify-center">
-        <div className="w-full p-2 md:max-w-5xl">
-          <div className="flex flex-col">
-            {data?.map((project) => (
-              <ProjectBox {...project} key={project.name} />
-            ))}
-            <article
-              className="mt-4 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-4 transition duration-500 ease-out hover:bg-scampi-900"
-              onClick={() =>
-                showCreateProject
-                  ? setShowCreateProject(false)
-                  : setShowCreateProject(true)
-              }
+        {/* Main Container */}
+        <div className="w-full p-4 pt-8 md:max-w-5xl">
+          {/* Title and Button */}
+          <div className="flex justify-between align-middle">
+            <h1 className="py-2 text-2xl">Projects</h1>
+            <button
+              className="w-30 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-2 outline-none transition duration-500 ease-out hover:bg-scampi-900"
+              onClick={() => setShowCreateProject(!showCreateProject)}
             >
               <Image
                 src={addfolder}
@@ -86,8 +82,14 @@ const Home: NextPage = () => {
                 alt="add folder picture"
               />
               <span>New Project</span>
-            </article>
+            </button>
           </div>
+          {/* Project List */}
+          <hr className="mb-2 mt-4 border-scampi-300"></hr>
+          {data?.map((project) => (
+            <ProjectBox {...project} key={project.name} />
+          ))}
+
           {showCreateProject && (
             <CreateProject
               showCreateProject={showCreateProject}
@@ -131,20 +133,32 @@ const CreateProject = (props: CreateProjectType) => {
   console.log(showCreateProject);
   return (
     <>
-      <div></div>
-      <form action="" className="flex gap-2 pt-4">
-        <input
-          type="text"
-          placeholder="Project Name"
-          className=" rounded border border-scampi-600 bg-neutral-900 p-2 text-scampi-50 outline-none focus:border-scampi-500"
-        ></input>
-        <button
-          type="submit"
-          className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
-        >
-          Submit
-        </button>
-      </form>
+      {/* <div className="fixed left-0 top-0 z-40 flex h-screen w-screen items-center justify-center bg-neutral-900 opacity-50"> */}
+      <div className="absolute top-1/4 flex h-1/3 w-11/12 flex-col items-center justify-center rounded border border-scampi-300 bg-neutral-900 opacity-100 shadow-2xl shadow-neutral-900 md:left-1/3 md:h-1/3 md:w-1/3">
+        <h1 className="pb-4 text-xl">New Project</h1>
+        <form action="" className="flex w-3/4 flex-col gap-2 ">
+          <input
+            type="text"
+            placeholder="Project Name"
+            className=" rounded border border-scampi-600 bg-neutral-900 p-2 text-scampi-50 outline-none focus:border-scampi-500"
+          ></input>
+          <div className="flex justify-center gap-6 pt-2">
+            <button
+              type="submit"
+              className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
+            >
+              Submit
+            </button>
+            <button
+              onClick={() => setShowCreateProject(!showCreateProject)}
+              className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+      {/* </div> */}
     </>
   );
 };

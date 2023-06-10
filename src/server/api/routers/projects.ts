@@ -2,9 +2,11 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const projectsRouter = createTRPCRouter({
-  getProjects: publicProcedure.query(({ ctx }) => {
+  getProjects: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.project.findMany({
-      where: { user: "user_2QlwdhosB6vn1sn1vG7YySOZmdt" },
+      where: { user: input },
     });
   }),
 });
+
+
