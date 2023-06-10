@@ -2,6 +2,8 @@ import { SignIn, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 import { api } from "~/utils/api";
 import { RouterOptions } from "next/dist/server/router";
@@ -9,6 +11,13 @@ import { RouterOptions } from "next/dist/server/router";
 import type { NextPage } from "next";
 import type { RouterOutputs } from "~/utils/api";
 type Project = RouterOutputs["projects"]["getProjects"][number];
+
+type CreateProjectType = {
+  setShowCreateProject: Dispatch<SetStateAction<boolean>>;
+  showCreateProject: boolean;
+};
+
+import { LoadingSpinner } from "~/components/loading";
 
 import folder from "../assets/folder.png";
 import addfolder from "../assets/add-folder.png";
@@ -25,12 +34,7 @@ const Home: NextPage = () => {
   const { user } = useUser();
   const { data, isLoading } = api.projects.getProjects.useQuery();
 
-  if (isLoading)
-    return (
-      <div className="flex h-screen items-center justify-center">
-        Loading...
-      </div>
-    );
+  const [showCreateProject, setShowCreateProject] = useState(false);
 
   if (!data)
     return (
@@ -38,6 +42,8 @@ const Home: NextPage = () => {
         Something went wrong
       </div>
     );
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <>
@@ -65,7 +71,14 @@ const Home: NextPage = () => {
             {data?.map((project) => (
               <ProjectBox {...project} key={project.name} />
             ))}
-            <article className="mt-4 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-4 transition duration-500 ease-out hover:bg-scampi-900">
+            <article
+              className="mt-4 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-4 transition duration-500 ease-out hover:bg-scampi-900"
+              onClick={() =>
+                showCreateProject
+                  ? setShowCreateProject(false)
+                  : setShowCreateProject(true)
+              }
+            >
               <Image
                 src={addfolder}
                 height={20}
@@ -75,7 +88,12 @@ const Home: NextPage = () => {
               <span>New Project</span>
             </article>
           </div>
-          <CreateProject />
+          {showCreateProject && (
+            <CreateProject
+              showCreateProject={showCreateProject}
+              setShowCreateProject={setShowCreateProject}
+            />
+          )}
         </div>
       </main>
     </>
@@ -87,7 +105,7 @@ const ProjectBox = (props: Project) => {
   return (
     <>
       <article
-        className="mt-4 flex items-center gap-3 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
+        className="mt-4 flex items-center gap-2 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
         key={id}
       >
         <Image src={folder} height={20} width={20} alt="folder picture" />
@@ -97,11 +115,23 @@ const ProjectBox = (props: Project) => {
   );
 };
 
-const CreateProject = () => {
+const CreateProject = (props: CreateProjectType) => {
+  const { setShowCreateProject, showCreateProject } = props;
   const { user } = useUser();
 
+  useEffect(() => {
+    const closeOnEscapeKey = (e: KeyboardEvent) =>
+      e.key === "Escape" ? setShowCreateProject(!showCreateProject) : null;
+    document.body.addEventListener("keydown", closeOnEscapeKey);
+    return () => {
+      document.body.removeEventListener("keydown", closeOnEscapeKey);
+    };
+  }, []);
+
+  console.log(showCreateProject);
   return (
     <>
+      <div></div>
       <form action="" className="flex gap-2 pt-4">
         <input
           type="text"
