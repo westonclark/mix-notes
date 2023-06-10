@@ -5,3 +5,7 @@
 body {
   @apply bg-neutral-900 text-scampi-50;
 }
+
+body::-webkit-scrollbar {
+  display: none;
+}

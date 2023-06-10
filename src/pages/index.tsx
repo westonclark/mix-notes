@@ -1,49 +1,49 @@
-import { SignIn, useUser } from "@clerk/nextjs";
+// Module Imports
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Dispatch, SetStateAction } from "react";
-
 import { api } from "~/utils/api";
 import { RouterOptions } from "next/dist/server/router";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 
+// Component and Asset Imports
+import { LoadingSpinner } from "~/components/loading";
+import folder from "../assets/folder.png";
+import addfolder from "../assets/add-folder.png";
+
+// Types
 import type { NextPage } from "next";
 import type { RouterOutputs } from "~/utils/api";
 type Project = RouterOutputs["projects"]["getProjects"][number];
-
-type CreateProjectType = {
+type CreateProjectPropsType = {
   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
   showCreateProject: boolean;
 };
 
-import { LoadingSpinner } from "~/components/loading";
-
-import folder from "../assets/folder.png";
-import addfolder from "../assets/add-folder.png";
-
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-
 const Home: NextPage = () => {
   const [showCreateProject, setShowCreateProject] = useState(false);
-  const { user } = useUser();
-
-  console.log(user);
 
   // const { data, isLoading } = api.projects.getProjects.useQuery(user.id);
   const { data, isLoading } = api.projects.getProjects.useQuery(
     "user_2QlwdhosB6vn1sn1vG7YySOZmdt"
   );
 
-  // "user_2QlwdhosB6vn1sn1vG7YySOZmdt";
+  if (isLoading) return <LoadingSpinner />;
+
   if (!data)
     return (
       <div className="flex h-screen items-center justify-center">
         Something went wrong
       </div>
     );
-
-  if (isLoading) return <LoadingSpinner />;
 
   return (
     <>
@@ -89,19 +89,20 @@ const Home: NextPage = () => {
           {data?.map((project) => (
             <ProjectBox {...project} key={project.name} />
           ))}
-
-          {showCreateProject && (
-            <CreateProject
-              showCreateProject={showCreateProject}
-              setShowCreateProject={setShowCreateProject}
-            />
-          )}
         </div>
       </main>
+      {/* Create Project Modal */}
+      {showCreateProject && (
+        <CreateProject
+          showCreateProject={showCreateProject}
+          setShowCreateProject={setShowCreateProject}
+        />
+      )}
     </>
   );
 };
 
+// Project Display Box
 const ProjectBox = (props: Project) => {
   const { id, name } = props;
   return (
@@ -117,9 +118,9 @@ const ProjectBox = (props: Project) => {
   );
 };
 
-const CreateProject = (props: CreateProjectType) => {
+// Create Project Modal Pop-Up
+const CreateProject = (props: CreateProjectPropsType) => {
   const { setShowCreateProject, showCreateProject } = props;
-  const { user } = useUser();
 
   useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) =>
@@ -128,12 +129,10 @@ const CreateProject = (props: CreateProjectType) => {
     return () => {
       document.body.removeEventListener("keydown", closeOnEscapeKey);
     };
-  }, []);
+  });
 
-  console.log(showCreateProject);
   return (
     <>
-      {/* <div className="fixed left-0 top-0 z-40 flex h-screen w-screen items-center justify-center bg-neutral-900 opacity-50"> */}
       <div className="absolute top-1/4 flex h-1/3 w-11/12 flex-col items-center justify-center rounded border border-scampi-300 bg-neutral-900 opacity-100 shadow-2xl shadow-neutral-900 md:left-1/3 md:h-1/3 md:w-1/3">
         <h1 className="pb-4 text-xl">New Project</h1>
         <form action="" className="flex w-3/4 flex-col gap-2 ">
@@ -158,7 +157,6 @@ const CreateProject = (props: CreateProjectType) => {
           </div>
         </form>
       </div>
-      {/* </div> */}
     </>
   );
 };
