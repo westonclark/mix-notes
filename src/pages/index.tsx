@@ -1,9 +1,14 @@
-import { type NextPage } from "next";
 import { SignIn, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
-import { api } from "~/utils/api";
 import Image from "next/image";
+
+import { api } from "~/utils/api";
+import { RouterOptions } from "next/dist/server/router";
+
+import type { NextPage } from "next";
+import type { RouterOutputs } from "~/utils/api";
+type Project = RouterOutputs["projects"]["getProjects"][number];
 
 import folder from "../assets/folder.png";
 import addfolder from "../assets/add-folder.png";
@@ -16,27 +21,20 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 
-const CreateProject: NextPage = () => {
-  return (
-    <div>
-      <input type="text"></input>
-    </div>
-  );
-};
-
 const Home: NextPage = () => {
-  const { data, isLoading } = api.projects.getAll.useQuery();
+  const { user } = useUser();
+  const { data, isLoading } = api.projects.getProjects.useQuery();
 
   if (isLoading)
     return (
-      <div className="flex h-screen justify-center align-middle">
+      <div className="flex h-screen items-center justify-center">
         Loading...
       </div>
     );
 
   if (!data)
     return (
-      <div className="flex h-screen justify-center align-middle">
+      <div className="flex h-screen items-center justify-center">
         Something went wrong
       </div>
     );
@@ -62,34 +60,61 @@ const Home: NextPage = () => {
       </header>
 
       <main className="flex h-screen justify-center">
-        <div className="w-full md:max-w-5xl">
-          <div className="flex flex-col pt-4">
-            {/* <CreateProject /> */}
+        <div className="w-full p-2 md:max-w-5xl">
+          <div className="flex flex-col">
             {data?.map((project) => (
-              <article
-                className="mt-4 flex items-center gap-3 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
-                key={project.id}
-              >
-                <Image
-                  src={folder}
-                  height={20}
-                  width={20}
-                  alt="folder picture"
-                />
-                <span>{project.name}</span>
-              </article>
+              <ProjectBox {...project} key={project.name} />
             ))}
-            <article className="mt-4 flex items-center justify-center gap-3 rounded border border-scampi-600 bg-scampi-950 p-4 transition duration-500 ease-out hover:bg-scampi-900">
+            <article className="mt-4 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-4 transition duration-500 ease-out hover:bg-scampi-900">
               <Image
                 src={addfolder}
                 height={20}
                 width={20}
                 alt="add folder picture"
               />
+              <span>New Project</span>
             </article>
           </div>
+          <CreateProject />
         </div>
       </main>
+    </>
+  );
+};
+
+const ProjectBox = (props: Project) => {
+  const { id, name } = props;
+  return (
+    <>
+      <article
+        className="mt-4 flex items-center gap-3 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
+        key={id}
+      >
+        <Image src={folder} height={20} width={20} alt="folder picture" />
+        <span>{name}</span>
+      </article>
+    </>
+  );
+};
+
+const CreateProject = () => {
+  const { user } = useUser();
+
+  return (
+    <>
+      <form action="" className="flex gap-2 pt-4">
+        <input
+          type="text"
+          placeholder="Project Name"
+          className=" rounded border border-scampi-600 bg-neutral-900 p-2 text-scampi-50 outline-none focus:border-scampi-500"
+        ></input>
+        <button
+          type="submit"
+          className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
+        >
+          Submit
+        </button>
+      </form>
     </>
   );
 };
