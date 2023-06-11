@@ -6,8 +6,12 @@ import {
 } from "~/server/api/trpc";
 
 export const projectsRouter = createTRPCRouter({
-  getProjects: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.project.findMany({});
+  getProjects: privateProcedure.query(({ ctx }) => {
+    const { userId } = ctx;
+    return ctx.prisma.project.findMany({
+      where: { user: userId },
+      orderBy: [{ name: "asc" }],
+    });
   }),
 
   createProject: privateProcedure
