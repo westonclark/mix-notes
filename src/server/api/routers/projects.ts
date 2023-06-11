@@ -1,15 +1,26 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  privateProcedure,
+} from "~/server/api/trpc";
 
 export const projectsRouter = createTRPCRouter({
-
-
-  
-  getProjects: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.project.findMany({
-      where: { user: input },
-    });
+  getProjects: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.project.findMany({});
   }),
+
+  createProject: privateProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const project = await ctx.prisma.project.create({
+        data: {
+          name: input,
+          user: userId,
+        },
+      });
+      return project;
+    }),
 });
-
-

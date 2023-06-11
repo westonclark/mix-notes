@@ -78,10 +78,8 @@ const Header = () => {
 
 const ProjectList = (props: ProjectListPropsType) => {
   const { setShowCreateProject, showCreateProject } = props;
-  
-  const { data, isLoading } = api.projects.getProjects.useQuery(
-    "user_2QlwdhosB6vn1sn1vG7YySOZmdt"
-  );
+
+  const { data, isLoading } = api.projects.getProjects.useQuery();
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -140,6 +138,10 @@ const ProjectBox = (props: Project) => {
 const CreateProject = (props: CreateProjectPropsType) => {
   const { setShowCreateProject, showCreateProject } = props;
 
+  const [input, setInput] = useState("");
+
+  const { mutate } = api.projects.createProject.useMutation();
+
   useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) =>
       e.key === "Escape" ? setShowCreateProject(!showCreateProject) : null;
@@ -156,11 +158,14 @@ const CreateProject = (props: CreateProjectPropsType) => {
         <form action="" className="flex w-3/4 flex-col gap-2 ">
           <input
             type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Project Name"
             className=" rounded border border-scampi-600 bg-neutral-900 p-2 text-scampi-50 outline-none focus:border-scampi-500"
           ></input>
           <div className="flex justify-center gap-6 pt-2">
             <button
+              onClick={() => mutate(input)}
               type="submit"
               className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
             >
