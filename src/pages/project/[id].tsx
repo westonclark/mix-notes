@@ -23,10 +23,7 @@ type Song = RouterOutputs["songs"]["getSongs"][number];
 //   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
 //   showCreateProject: boolean;
 // };
-// type ProjectListPropsType = {
-//   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
-//   showCreateProject: boolean;
-// };
+
 
 // Main Component
 const ProjectPage: NextPage = () => {

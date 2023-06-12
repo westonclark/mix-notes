@@ -22,10 +22,6 @@ type CreateProjectPropsType = {
   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
   showCreateProject: boolean;
 };
-type ProjectListPropsType = {
-  setShowCreateProject: Dispatch<SetStateAction<boolean>>;
-  showCreateProject: boolean;
-};
 
 // Main Component
 const Home: NextPage = () => {
@@ -60,10 +56,7 @@ const Home: NextPage = () => {
               </button>
             </div>
             <hr className="mb-2 mt-4 border-scampi-300"></hr>
-            <ProjectList
-              showCreateProject={showCreateProject}
-              setShowCreateProject={setShowCreateProject}
-            />
+            <ProjectList />
           </div>
           {showCreateProject && (
             <CreateProject
@@ -78,8 +71,7 @@ const Home: NextPage = () => {
 };
 
 // Porject List
-const ProjectList = (props: ProjectListPropsType) => {
-  const { setShowCreateProject, showCreateProject } = props;
+const ProjectList = () => {
   const { data, isLoading } = api.projects.getProjects.useQuery();
 
   if (isLoading) return <LoadingSpinner />;
