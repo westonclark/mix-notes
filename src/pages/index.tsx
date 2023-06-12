@@ -40,7 +40,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="flex h-screen justify-center">
+      <main className="flex justify-center">
         <ProjectList
           showCreateProject={showCreateProject}
           setShowCreateProject={setShowCreateProject}
@@ -64,9 +64,7 @@ const ProjectList = (props: ProjectListPropsType) => {
 
   if (!data)
     return (
-      <div className="flex h-screen items-center justify-center">
-        Something went wrong
-      </div>
+      <div className="flex justify-center pt-40">Something went wrong</div>
     );
 
   return (
