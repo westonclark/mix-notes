@@ -11,7 +11,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model Project {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
