@@ -3,25 +3,20 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Dispatch, SetStateAction } from "react";
 import { api } from "~/utils/api";
 import { RouterOptions } from "next/dist/server/router";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
 
 // Component and Asset Imports
 import { LoadingSpinner } from "~/components/loading";
-import folder from "../assets/folder.png";
-import addfolder from "../assets/add-folder.png";
+import { Header } from "~/components/header";
+
+import folder from "~/assets/folder.png";
+import addfolder from "~/assets/add-folder.png";
 
 // Types
 import type { NextPage } from "next";
 import type { RouterOutputs } from "~/utils/api";
+import type { Dispatch, SetStateAction } from "react";
 type Project = RouterOutputs["projects"]["getProjects"][number];
 
 type CreateProjectPropsType = {
@@ -33,6 +28,7 @@ type ProjectListPropsType = {
   showCreateProject: boolean;
 };
 
+// Main Component
 const Home: NextPage = () => {
   const [showCreateProject, setShowCreateProject] = useState(false);
 
@@ -60,25 +56,8 @@ const Home: NextPage = () => {
   );
 };
 
-const Header = () => {
-  return (
-    <header className="flex items-center justify-between border-b border-slate-400 p-4">
-      <p>MIX NOTES</p>
-      <SignedIn>
-        {/* Mount the UserButton component */}
-        <UserButton afterSignOutUrl="/" />
-      </SignedIn>
-      <SignedOut>
-        {/* Signed out users get sign in button */}
-        <SignInButton />
-      </SignedOut>
-    </header>
-  );
-};
-
 const ProjectList = (props: ProjectListPropsType) => {
   const { setShowCreateProject, showCreateProject } = props;
-
   const { data, isLoading } = api.projects.getProjects.useQuery();
 
   if (isLoading) return <LoadingSpinner />;
@@ -108,12 +87,13 @@ const ProjectList = (props: ProjectListPropsType) => {
           <span>New Project</span>
         </button>
       </div>
-
-      {/* Project List */}
       <hr className="mb-2 mt-4 border-scampi-300"></hr>
-      {data?.map((project) => (
-        <ProjectBox {...project} key={project.name} />
-      ))}
+      {/* Project List */}
+      <div>
+        {data?.map((project) => (
+          <ProjectBox {...project} key={project.name} />
+        ))}
+      </div>
     </div>
   );
 };
@@ -123,13 +103,14 @@ const ProjectBox = (props: Project) => {
   const { id, name } = props;
   return (
     <>
-      <article
+      <Link
+        href={`/project/${id}`}
         className="mt-4 flex items-center gap-2 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
         key={id}
       >
         <Image src={folder} height={20} width={20} alt="folder picture" />
         <span>{name}</span>
-      </article>
+      </Link>
     </>
   );
 };
@@ -137,10 +118,15 @@ const ProjectBox = (props: Project) => {
 // Create Project Modal
 const CreateProject = (props: CreateProjectPropsType) => {
   const { setShowCreateProject, showCreateProject } = props;
-
   const [input, setInput] = useState("");
-
-  const { mutate } = api.projects.createProject.useMutation();
+  const ctx = api.useContext();
+  const { mutate } = api.projects.createProject.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.projects.getProjects.invalidate();
+      setShowCreateProject(false);
+    },
+  });
 
   useEffect(() => {
     const closeOnEscapeKey = (e: KeyboardEvent) =>
@@ -165,7 +151,10 @@ const CreateProject = (props: CreateProjectPropsType) => {
           ></input>
           <div className="flex justify-center gap-6 pt-2">
             <button
-              onClick={() => mutate(input)}
+              onClick={(e) => {
+                e.preventDefault();
+                mutate(input);
+              }}
               type="submit"
               className=" rounded border border-scampi-600 bg-scampi-950 p-2 transition duration-500 ease-out hover:bg-scampi-900"
             >
