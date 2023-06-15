@@ -1,5 +1,6 @@
 // Module Imports
 import Head from "next/head";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -11,22 +12,23 @@ import { RouterOptions } from "next/dist/server/router";
 import { LoadingSpinner } from "~/components/loading";
 import { Header } from "~/components/header";
 import audiofile from "~/assets/audiofile.png";
-// import addfolder from "~/assets/add-folder.png";
 import upload from "~/assets/upload.png";
 
 // Types
-import type { NextPage } from "next";
+import type {
+  GetStaticProps,
+  InferGetServerSidePropsType,
+  NextPage,
+} from "next";
 import type { RouterOutputs } from "~/utils/api";
 type Song = RouterOutputs["songs"]["getSongs"][number];
 
-// type CreateProjectPropsType = {
-//   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
-//   showCreateProject: boolean;
-// };
-
-
 // Main Component
-const ProjectPage: NextPage = () => {
+const ProjectPage: NextPage<{ id: string }> = (props) => {
+  const { id } = props;
+
+  if (!id) return <div>oops</div>;
+
   return (
     <>
       <Head>
@@ -50,15 +52,16 @@ const ProjectPage: NextPage = () => {
             </button>
           </div>
           <hr className="mb-2 mt-4 border-scampi-300"></hr>
-          <SongList />
+          <SongList id={id} />
         </div>
       </main>
     </>
   );
 };
 
-const SongList = () => {
-  const { data, isLoading } = api.songs.getSongs.useQuery();
+// Song List
+const SongList: NextPage<{ id: string }> = ({ id }) => {
+  const { data, isLoading } = api.songs.getSongs.useQuery(id);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -66,6 +69,9 @@ const SongList = () => {
     return (
       <div className="flex justify-center pt-40">Something went wrong</div>
     );
+
+  if (!data.length)
+    return <div className="flex justify-center pt-40">No Songs to Display</div>;
 
   return (
     <div>
@@ -90,6 +96,33 @@ const SongBox = (props: Song) => {
       </article>
     </>
   );
+};
+
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "~/server/api/root";
+import { prisma } from "~/server/db";
+import superjson from "superjson";
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const ssg = createServerSideHelpers({
+    router: appRouter,
+    ctx: { prisma, userId: null },
+    transformer: superjson, // optional - adds superjson serialization
+  });
+
+  const id = context.params?.id;
+
+  if (typeof id !== "string") throw new Error("no id");
+
+  await ssg.songs.getSongs.prefetch(id);
+
+  return {
+    props: { trpcState: ssg.dehydrate(), id },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
 };
 
 export default ProjectPage;
