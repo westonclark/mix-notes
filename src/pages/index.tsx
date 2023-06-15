@@ -41,7 +41,7 @@ const Home: NextPage = () => {
           <div className="w-full p-4 pt-8 md:max-w-5xl">
             {/* Title and Add Project Button */}
             <div className="flex justify-between align-middle">
-              <h1 className="py-2 text-2xl">Projects</h1>
+              <h1 className=" text-2xl">Projects</h1>
               <button
                 className="w-30 flex items-center justify-center gap-2 rounded border border-scampi-600 bg-scampi-950 p-2 outline-none transition duration-500 ease-out hover:bg-scampi-900"
                 onClick={() => setShowCreateProject(!showCreateProject)}

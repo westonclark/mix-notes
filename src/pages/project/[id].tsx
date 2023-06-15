@@ -26,6 +26,7 @@ type Song = RouterOutputs["songs"]["getSongs"][number];
 // Main Component
 const ProjectPage: NextPage<{ id: string }> = (props) => {
   const { id } = props;
+  const { data } = api.projects.getProjectById.useQuery(id);
 
   if (!id) return <div>oops</div>;
 
@@ -40,7 +41,7 @@ const ProjectPage: NextPage<{ id: string }> = (props) => {
         <div className="w-full p-4 pt-8 md:max-w-5xl">
           {/* Title and Upload Song Button */}
           <div className="flex justify-between align-middle">
-            <h1 className="py-2 text-2xl">Project Name</h1>
+            <h1 className=" text-2xl">{data?.name}</h1>
             <button className="w-30 flex items-center justify-center gap-1 rounded border border-scampi-600 bg-scampi-950 p-2 outline-none transition duration-500 ease-out hover:bg-scampi-900">
               <Image
                 src={upload}
@@ -114,7 +115,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   if (typeof id !== "string") throw new Error("no id");
 
-  await ssg.songs.getSongs.prefetch(id);
+  await ssg.projects.getProjectById.prefetch(id);
 
   return {
     props: { trpcState: ssg.dehydrate(), id },

@@ -27,4 +27,11 @@ export const projectsRouter = createTRPCRouter({
       });
       return project;
     }),
+
+  getProjectById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.project.findFirst({
+      where: { id: input },
+      orderBy: [{ name: "asc" }],
+    });
+  }),
 });
