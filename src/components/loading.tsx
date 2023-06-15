@@ -1,6 +1,6 @@
 export const LoadingSpinner = () => {
   return (
-    <div className="flex justify-center gap-2 pt-40">
+    <div className="flex justify-center gap-2 pt-32">
       <div
         className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-scampi-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
         role="status"

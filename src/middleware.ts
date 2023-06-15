@@ -1,9 +1,7 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
-  afterAuth(auth, req, evt) {
-    console.log("in middleware");
-  },
+  // afterAuth(auth, req, evt) {},
 });
 
 export const config = {
