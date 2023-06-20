@@ -17,6 +17,7 @@ import more from "~/assets/more.png";
 import less from "~/assets/less.png";
 import left from "~/assets/left.png";
 import right from "~/assets/right.png";
+import plus from "~/assets/plus.png";
 
 // Types
 import type {
@@ -26,10 +27,10 @@ import type {
 } from "next";
 import type { RouterOutputs } from "~/utils/api";
 type Song = RouterOutputs["songs"]["getSongs"][number];
+type Note = RouterOutputs["notes"]["getNotes"][number];
 
 // Main Component
-const ProjectPage: NextPage<{ id: string }> = (props) => {
-  const { id } = props;
+const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.projects.getProjectById.useQuery(id);
 
   if (!id) return <div>oops</div>;
@@ -46,15 +47,21 @@ const ProjectPage: NextPage<{ id: string }> = (props) => {
           {/* Title and Upload Song Button */}
           <div className="flex justify-between align-middle">
             <h1 className=" text-2xl">{data?.name}</h1>
-            <button className="w-30 flex items-center justify-center gap-1 rounded border border-scampi-600 bg-scampi-950 p-2 outline-none transition duration-500 ease-out hover:bg-scampi-900">
-              <Image
-                src={upload}
-                height={20}
-                width={20}
-                alt="add folder picture"
-              />
-              <span>Upload</span>
-            </button>
+            <form>
+              <label
+                className="w-30 flex items-center justify-center gap-1 rounded border border-scampi-600 bg-scampi-950 p-2 outline-none transition duration-500 ease-out hover:bg-scampi-900"
+                htmlFor="file"
+              >
+                <Image
+                  src={upload}
+                  height={20}
+                  width={20}
+                  alt="add folder picture"
+                />
+                <span>Upload</span>
+              </label>
+              <input type="file" id="file" className="hidden" />
+            </form>
           </div>
           <hr className="mb-2 mt-4 border-scampi-300"></hr>
           <SongList id={id} />
@@ -81,27 +88,22 @@ const SongList: NextPage<{ id: string }> = ({ id }) => {
   return (
     <div>
       {data?.map((song) => (
-        <SongBox {...song} key={song.fileName} />
+        <Song {...song} key={song.fileName} />
       ))}
     </div>
   );
 };
 
 // Song Box
-const SongBox = (props: Song) => {
-  const { id, fileName, url } = props;
+const Song: NextPage<Song> = ({ id, fileName }) => {
   const [showNotes, setShowNotes] = useState(false);
   return (
     <div className="mt-4 flex w-full items-center gap-4 md:max-w-5xl">
       {/* Left Arrow */}
-      <div className="flex items-center rounded border border-scampi-300 transition duration-500 ease-out hover:bg-scampi-950">
-        <Image
-          src={left}
-          height={20}
-          width={20}
-          alt="last version transition duration-500 ease-out hover:bg-scampi-950"
-        />
-      </div>
+      {/* <div className="flex items-center rounded border border-scampi-300 transition duration-500 ease-out hover:bg-scampi-950">
+        <Image src={left} height={20} width={20} alt="last version" />
+      </div> */}
+
       {/* Main Article */}
       <article
         className="flex w-full flex-col items-center justify-between rounded border border-scampi-300 p-4"
@@ -136,14 +138,15 @@ const SongBox = (props: Song) => {
         {showNotes && (
           <div className="w-full pt-4 ">
             <hr className="w-full border-scampi-300 pb-2"></hr>
-            <p>notes</p>
+            <NotesList id={id} />
           </div>
         )}
       </article>
+
       {/* Right Arrow */}
-      <div className="flex items-center rounded border border-scampi-300 transition duration-500 ease-out hover:bg-scampi-950">
-        <Image src={right} height={20} width={20} alt="next version" />
-      </div>
+      {/* <div className="flex items-center rounded border p-1 border-scampi-400 transition duration-500 ease-out hover:bg-scampi-950">
+        <Image src={plus} height={20} width={20} alt="next version" />
+      </div> */}
     </div>
   );
 };
@@ -152,6 +155,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
+import { Input } from "postcss";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createServerSideHelpers({
@@ -161,9 +165,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   });
 
   const id = context.params?.id;
-
   if (typeof id !== "string") throw new Error("no id");
-
   await ssg.projects.getProjectById.prefetch(id);
 
   return {
@@ -173,6 +175,55 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export const getStaticPaths = () => {
   return { paths: [], fallback: "blocking" };
+};
+
+// Note List
+const NotesList: NextPage<{ id: string }> = ({ id }) => {
+  const { data, isLoading } = api.notes.getNotes.useQuery(id);
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (!data)
+    return (
+      <div className="flex justify-center pt-40">Something went wrong</div>
+    );
+
+  if (!data.length)
+    return <div className="flex justify-center">No Notes to Display</div>;
+
+  return (
+    <div>
+      {data?.map((note) => (
+        <Note {...note} key={note.name} />
+      ))}
+    </div>
+  );
+};
+
+// Note
+const Note: NextPage<Note> = (note) => {
+  const setComplete = api.notes.setComplete.useMutation();
+
+  const handleCheck = (e: React.MouseEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    setComplete.mutate({ id: note.id, newValue: target.checked });
+  };
+
+  return (
+    <div
+      className={`flex items-baseline gap-2 ${
+        note.completed ? " text-scampi-300" : ""
+      }`}
+    >
+      <input
+        id={`${note.id}`}
+        type="checkbox"
+        defaultChecked={note.completed}
+        onClick={(e) => handleCheck(e)}
+      ></input>
+      <label htmlFor={`${note.id}`}>{note.name}</label>
+    </div>
+  );
 };
 
 export default ProjectPage;
