@@ -13,6 +13,19 @@ export const notesRouter = createTRPCRouter({
     });
   }),
 
+  createNote: publicProcedure
+    .input(z.object({ name: z.string(), songId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const note = await ctx.prisma.note.create({
+        data: {
+          name: input.name,
+          songId: input.songId,
+          completed: false,
+        },
+      });
+      return note;
+    }),
+
   setComplete: publicProcedure
     .input(z.object({ id: z.string(), newValue: z.boolean() }))
     .mutation(({ ctx, input }) => {

@@ -124,7 +124,7 @@ const Song: NextPage<Song> = ({ id, fileName }) => {
 
           {/* <audio src={url} controls className="h-6"></audio> */}
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center">
             <Image
               src={showNotes ? less : more}
               height={20}
@@ -179,7 +179,20 @@ export const getStaticPaths = () => {
 
 // Note List
 const NotesList: NextPage<{ id: string }> = ({ id }) => {
+  const [noteInput, setNoteInput] = useState("");
   const { data, isLoading } = api.notes.getNotes.useQuery(id);
+  const ctx = api.useContext();
+
+  const { mutate } = api.notes.createNote.useMutation({
+    onSuccess: () => {
+      setNoteInput("");
+      void ctx.notes.getNotes.invalidate();
+    },
+  });
+
+  const handleSubmit = (name: string, songId: string) => {
+    mutate({ name, songId });
+  };
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -196,17 +209,40 @@ const NotesList: NextPage<{ id: string }> = ({ id }) => {
       {data?.map((note) => (
         <Note {...note} key={note.name} />
       ))}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(noteInput, id);
+        }}
+        className="mt-2 flex gap-2"
+      >
+        <input
+          value={noteInput}
+          onChange={(e) => setNoteInput(e.target.value)}
+          type="text"
+          className=" rounded border border-scampi-600 bg-neutral-900 text-scampi-50 outline-none focus:border-scampi-500"
+        ></input>
+        <button className="rounded border border-scampi-300 bg-scampi-950 px-2">
+          Add
+        </button>
+      </form>
     </div>
   );
 };
 
 // Note
-const Note: NextPage<Note> = (note) => {
-  const setComplete = api.notes.setComplete.useMutation();
+const Note: NextPage<Note> = (note: Note) => {
+  const ctx = api.useContext();
+
+  const { mutate } = api.notes.setComplete.useMutation({
+    onSuccess: () => {
+      void ctx.notes.getNotes.invalidate();
+    },
+  });
 
   const handleCheck = (e: React.MouseEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
-    setComplete.mutate({ id: note.id, newValue: target.checked });
+    mutate({ id: note.id, newValue: target.checked });
   };
 
   return (

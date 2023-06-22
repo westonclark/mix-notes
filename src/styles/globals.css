@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-neutral-900 text-scampi-50;
+  @apply bg-neutral-950 text-scampi-50;
 }
 
 body::-webkit-scrollbar {
