@@ -33,7 +33,24 @@ type Note = RouterOutputs["notes"]["getNotes"][number];
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.projects.getProjectById.useQuery(id);
 
-  if (!id) return <div>oops</div>;
+  // function handleFileSelect(e) {
+  //   const file = e.target.files[0];
+
+  //     const formData = new FormData();
+  //     formData.append("name", file.name);
+  //     formData.append("email", email);
+  //     formData.append("project_name", projectName);
+  //     formData.append("project_id", projectId);
+  //     formData.append("audiofile", file);
+
+  //     // axios
+  //     //   .post("/api/songs", formData)
+  //     //   .then((res) => {
+  //     //     getSongs();
+  //     //   })
+  //     //   .catch((err) => ("Error occurred", err));
+
+  // }
 
   return (
     <>
@@ -209,12 +226,13 @@ const NotesList: NextPage<{ id: string }> = ({ id }) => {
       {data?.map((note) => (
         <Note {...note} key={note.name} />
       ))}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit(noteInput, id);
         }}
-        className="mt-2 flex gap-2"
+        className=" flex gap-2 pt-1"
       >
         <input
           value={noteInput}

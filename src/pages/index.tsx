@@ -131,7 +131,7 @@ const CreateProject = (props: CreateProjectPropsType) => {
 
   return (
     <>
-      <div className="absolute top-1/4 flex h-1/3 w-11/12 flex-col items-center justify-center rounded border border-scampi-300 bg-neutral-900 opacity-100 shadow-2xl shadow-neutral-900 md:left-1/3 md:h-1/3 md:w-1/3">
+      <div className="absolute top-1/4 flex h-1/3 w-11/12 flex-col items-center justify-center rounded border border-scampi-300 bg-neutral-950 opacity-100 shadow-2xl shadow-neutral-900 md:left-1/3 md:h-1/3 md:w-1/3">
         <h1 className="pb-4 text-xl">New Project</h1>
         <form action="" className="flex w-3/4 flex-col gap-2 ">
           <input
@@ -139,7 +139,7 @@ const CreateProject = (props: CreateProjectPropsType) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Project Name"
-            className=" rounded border border-scampi-600 bg-neutral-900 p-2 text-scampi-50 outline-none focus:border-scampi-500"
+            className=" rounded border border-scampi-600 bg-neutral-950 p-2 text-scampi-50 outline-none focus:border-scampi-500"
           ></input>
           <div className="flex justify-center gap-6 pt-2">
             <button
