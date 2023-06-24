@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-neutral-950 text-scampi-50;
+  @apply bg-neutral-900 font-lato text-white-1;
 }
 
 body::-webkit-scrollbar {
