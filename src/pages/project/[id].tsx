@@ -28,14 +28,12 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   //     formData.append("project_name", projectName);
   //     formData.append("project_id", projectId);
   //     formData.append("audiofile", file);
-
   //     // axios
   //     //   .post("/api/songs", formData)
   //     //   .then((res) => {
   //     //     getSongs();
   //     //   })
   //     //   .catch((err) => ("Error occurred", err));
-
   // }
 
   return (
