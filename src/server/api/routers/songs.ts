@@ -12,4 +12,26 @@ export const songsRouter = createTRPCRouter({
       orderBy: [{ songName: "asc" }],
     });
   }),
+
+  createSong: privateProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        file: z.custom<File>(),
+        projectId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const song = await ctx.prisma.song.create({
+        data: {
+          songName: input.fileName,
+          fileName: input.fileName,
+          projectId: input.projectId,
+          url: "Cheese.com",
+        },
+      });
+      return song;
+    }),
 });

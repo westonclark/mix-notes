@@ -36,7 +36,7 @@ const SongList: NextPage<{ id: string }> = ({ id }) => {
 };
 
 // Song Box
-const Song: NextPage<Song> = ({ id, fileName }) => {
+const Song: NextPage<Song> = ({ id, fileName, url }) => {
   const [showNotes, setShowNotes] = useState(false);
   return (
     <div className="mt-4 flex w-full items-center gap-4 md:max-w-5xl">
@@ -63,7 +63,7 @@ const Song: NextPage<Song> = ({ id, fileName }) => {
             </div>
           </div>
 
-          {/* <audio src={url} controls className="h-6"></audio> */}
+          <audio src={url} controls className="h-6"></audio>
 
           <div className="flex items-center">
             <Image

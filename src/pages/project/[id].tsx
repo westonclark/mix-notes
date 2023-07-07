@@ -2,6 +2,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import { api } from "~/utils/api";
+import { useParams } from "next/navigation";
 
 // Component and Asset Imports
 import { Header } from "~/components/header";
@@ -19,22 +20,23 @@ import type { GetStaticProps, NextPage } from "next";
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.projects.getProjectById.useQuery(id);
 
-  // function handleFileSelect(e) {
-  //   const file = e.target.files[0];
+  const ctx = api.useContext();
+  const { mutate } = api.songs.createSong.useMutation({
+    onSuccess: () => {
+      void ctx.songs.getSongs.invalidate();
+    },
+  });
 
-  //     const formData = new FormData();
-  //     formData.append("name", file.name);
-  //     formData.append("email", email);
-  //     formData.append("project_name", projectName);
-  //     formData.append("project_id", projectId);
-  //     formData.append("audiofile", file);
-  //     // axios
-  //     //   .post("/api/songs", formData)
-  //     //   .then((res) => {
-  //     //     getSongs();
-  //     //   })
-  //     //   .catch((err) => ("Error occurred", err));
-  // }
+  function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || e.target.files[0] == undefined) return;
+
+    const file = e.target.files[0];
+    mutate({
+      fileName: file.name,
+      file: file,
+      projectId: id,
+    });
+  }
 
   return (
     <>
@@ -61,7 +63,12 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                 />
                 <span>Upload</span>
               </label>
-              <input type="file" id="file" className="hidden" />
+              <input
+                type="file"
+                id="file"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
             </form>
           </div>
           <hr className="mb-2 mt-4 border-scampi-300"></hr>
@@ -76,6 +83,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
+import { ChangeEvent } from "react";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createServerSideHelpers({
