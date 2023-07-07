@@ -9,7 +9,6 @@ import audiofile from "~/assets/audiofile.png";
 import more from "~/assets/more.png";
 import less from "~/assets/less.png";
 
-
 type Song = RouterOutputs["songs"]["getSongs"][number];
 
 // Song List
@@ -65,14 +64,16 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
 
           <audio src={url} controls className="h-6"></audio>
 
-          <div className="flex items-center gap-1">
+          <div
+            className="flex items-center gap-1"
+            onClick={() => setShowNotes(!showNotes)}
+          >
             <p>Notes</p>
             <Image
               src={showNotes ? less : more}
               height={20}
               width={20}
               alt="more info"
-              onClick={() => setShowNotes(!showNotes)}
             ></Image>
           </div>
         </div>
