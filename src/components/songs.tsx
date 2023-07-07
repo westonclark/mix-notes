@@ -65,7 +65,8 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
 
           <audio src={url} controls className="h-6"></audio>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
+            <p>Notes</p>
             <Image
               src={showNotes ? less : more}
               height={20}

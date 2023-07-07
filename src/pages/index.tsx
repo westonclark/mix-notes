@@ -27,7 +27,7 @@ const Home: NextPage = () => {
       <Header />
       <main className="flex justify-center">
         <SignedOut>
-          <h1 className="text-4xl">MIX NOTES</h1>
+          <h1 className="text-4xl pt-48">MIX NOTES</h1>
         </SignedOut>
         <SignedIn>
           {/* Main container */}

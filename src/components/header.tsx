@@ -1,11 +1,14 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export const Header = () => {
   return (
-    <header className="sticky top-0 flex items-center justify-between border-b bg-neutral-900 border-neutral-400 text-white-1 px-10 py-4">
-      <p className="text-xl">MIX NOTES</p>
+    <header className="sticky top-0 flex items-center justify-between border-b border-neutral-400 bg-neutral-900 px-40 py-4 text-white-1">
+      <Link className="text-xl" href="/">
+        MIX NOTES
+      </Link>
       <SignedIn>
-        <UserButton afterSignOutUrl="/" />
+        <UserButton showName={true} afterSignOutUrl="/" />
       </SignedIn>
       <SignedOut>
         <SignInButton />

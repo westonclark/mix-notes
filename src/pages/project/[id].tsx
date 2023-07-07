@@ -31,6 +31,8 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
     if (!e.target.files || e.target.files[0] == undefined) return;
 
     const file = e.target.files[0];
+    console.log(file);
+
     mutate({
       fileName: file.name,
       file: file,
