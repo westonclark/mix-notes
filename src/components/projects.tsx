@@ -38,7 +38,7 @@ const ProjectBox = (props: Project) => {
     <>
       <Link
         href={`/project/${id}`}
-        className="mt-4 flex items-center gap-2 rounded border  border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
+        className="mt-4 flex items-center gap-2 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
         key={id}
       >
         <Image src={folder} height={20} width={20} alt="folder picture" />

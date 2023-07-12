@@ -38,7 +38,7 @@ const SongList: NextPage<{ id: string }> = ({ id }) => {
 const Song: NextPage<Song> = ({ id, fileName, url }) => {
   const [showNotes, setShowNotes] = useState(false);
   return (
-    <div className="mt-4 flex w-full items-center gap-4 md:max-w-5xl">
+    <div className="mt-4 flex w-full items-center gap-4 transition duration-200 ease-out  md:max-w-5xl">
       {/* Left Arrow */}
       {/* <div className="flex items-center rounded border border-scampi-300 transition duration-500 ease-out hover:bg-scampi-950">
         <Image src={left} height={20} width={20} alt="last version" />
@@ -46,10 +46,10 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
 
       {/* Main Article */}
       <article
-        className="flex w-full flex-col items-center justify-between rounded border border-scampi-300 p-4"
+        className="flex w-full flex-col items-center justify-between rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950"
         key={id}
       >
-        <div className="flex w-full justify-between">
+        <div className="w-full justify-between md:flex">
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <Image
