@@ -24,7 +24,7 @@ export const songsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { userId } = ctx;
+      // const { userId } = ctx;
 
       // const awsName = `${userId}/${input.projectId}/${input.fileName}`;
       // console.log("AWSNAME", awsName);

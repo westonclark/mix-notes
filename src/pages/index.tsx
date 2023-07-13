@@ -1,22 +1,15 @@
 // Module Imports
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { api } from "~/utils/api";
-import { RouterOptions } from "next/dist/server/router";
+import { useState } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 // Component and Asset Imports
-import { LoadingSpinner } from "~/components/loading";
 import { Header } from "~/components/header";
 import addfolder from "~/assets/add-folder.png";
 
 // Types
 import type { NextPage } from "next";
-import type { RouterOutputs } from "~/utils/api";
-import type { Dispatch, SetStateAction } from "react";
 import ProjectList, { CreateProject } from "~/components/projects";
-
-
 
 // Main Component
 const Home: NextPage = () => {
@@ -27,7 +20,7 @@ const Home: NextPage = () => {
       <Header />
       <main className="flex justify-center">
         <SignedOut>
-          <h1 className="text-4xl pt-48">MIX NOTES</h1>
+          <h1 className="pt-48 text-4xl">MIX NOTES</h1>
         </SignedOut>
         <SignedIn>
           {/* Main container */}
@@ -62,7 +55,5 @@ const Home: NextPage = () => {
     </>
   );
 };
-
-
 
 export default Home;

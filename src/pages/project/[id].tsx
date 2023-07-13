@@ -2,7 +2,6 @@
 import Head from "next/head";
 import Image from "next/image";
 import { api } from "~/utils/api";
-import { useParams } from "next/navigation";
 
 // Component and Asset Imports
 import { Header } from "~/components/header";
@@ -31,7 +30,6 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
     if (!e.target.files || e.target.files[0] == undefined) return;
 
     const file = e.target.files[0];
-    console.log(file);
 
     mutate({
       fileName: file.name,
@@ -85,7 +83,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import superjson from "superjson";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createServerSideHelpers({

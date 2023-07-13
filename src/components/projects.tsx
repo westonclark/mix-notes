@@ -1,25 +1,33 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { RouterOutputs, api } from "~/utils/api";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { type RouterOutputs, api } from "~/utils/api";
 import { LoadingSpinner } from "./loading";
 import Image from "next/image";
 import Link from "next/link";
+
 import folder from "~/assets/folder.png";
+import dots from "~/assets/dots.png";
 
 type Project = RouterOutputs["projects"]["getProjects"][number];
+
 type CreateProjectPropsType = {
   setShowCreateProject: Dispatch<SetStateAction<boolean>>;
   showCreateProject: boolean;
 };
 
-// Porject List
+// Projject List
 const ProjectList = () => {
-  const { data, isLoading } = api.projects.getProjects.useQuery();
+  const { data, isLoading, isError } = api.projects.getProjects.useQuery();
 
-  if (isLoading) return <LoadingSpinner />;
-
-  if (!data)
+  if (isLoading)
     return (
-      <div className="flex justify-center pt-40">Something went wrong</div>
+      <div className="p-32">
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (!data || isError)
+    return (
+      <div className="flex justify-center pt-32">Something went wrong</div>
     );
 
   return (
@@ -35,16 +43,16 @@ const ProjectList = () => {
 const ProjectBox = (props: Project) => {
   const { id, name } = props;
   return (
-    <>
-      <Link
-        href={`/project/${id}`}
-        className="mt-4 flex items-center gap-2 rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 "
-        key={id}
-      >
+    <div className="mt-4 flex items-center justify-between rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950 ">
+      <Link href={`/project/${id}`} key={id} className="flex w-full gap-2">
         <Image src={folder} height={20} width={20} alt="folder picture" />
         <span>{name}</span>
       </Link>
-    </>
+      <button className="pl-2">
+        {" "}
+        <Image src={dots} alt="dots" height={20} width={20} />
+      </button>
+    </div>
   );
 };
 

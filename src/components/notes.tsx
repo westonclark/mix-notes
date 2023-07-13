@@ -1,8 +1,8 @@
-import { NextPage } from "next";
-import { RouterOutputs, api } from "~/utils/api";
-import { LoadingSpinner } from "~/components/loading";
+import type { NextPage } from "next";
+import { type RouterOutputs, api } from "~/utils/api";
 import { useState } from "react";
 
+import { LoadingSpinner } from "~/components/loading";
 type Note = RouterOutputs["notes"]["getNotes"][number];
 
 // Note List
@@ -23,15 +23,17 @@ const NotesList: NextPage<{ id: string }> = ({ id }) => {
     mutate({ name, songId });
   };
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading)
+    return (
+      <div className="pt-2">
+        <LoadingSpinner />
+      </div>
+    );
 
   if (!data)
     return (
-      <div className="flex justify-center pt-40">Something went wrong</div>
+      <div className="flex justify-center pt-32">Something went wrong</div>
     );
-
-  // if (!data.length)
-  //   return <div className="flex justify-center">No Notes to Display</div>;
 
   return (
     <div>
@@ -50,7 +52,7 @@ const NotesList: NextPage<{ id: string }> = ({ id }) => {
           value={noteInput}
           onChange={(e) => setNoteInput(e.target.value)}
           type="text"
-          className="rounded border border-scampi-600 bg-neutral-900 text-scampi-50 outline-none focus:border-scampi-500 px-2 w-auto"
+          className="w-auto rounded border border-scampi-600 bg-neutral-900 px-2 text-scampi-50 outline-none focus:border-scampi-500"
         ></input>
         <button className="rounded border border-scampi-300 bg-scampi-950 px-2">
           Add

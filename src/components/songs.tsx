@@ -1,5 +1,5 @@
-import { NextPage } from "next";
-import { RouterOutputs, api } from "~/utils/api";
+import type { NextPage } from "next";
+import { type RouterOutputs, api } from "~/utils/api";
 import { LoadingSpinner } from "./loading";
 import { useState } from "react";
 import Image from "next/image";
@@ -15,7 +15,12 @@ type Song = RouterOutputs["songs"]["getSongs"][number];
 const SongList: NextPage<{ id: string }> = ({ id }) => {
   const { data, isLoading } = api.songs.getSongs.useQuery(id);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading)
+    return (
+      <div className="p-32">
+        <LoadingSpinner />
+      </div>
+    );
 
   if (!data)
     return (
@@ -39,11 +44,6 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
   const [showNotes, setShowNotes] = useState(false);
   return (
     <div className="mt-4 flex w-full items-center gap-4 transition duration-200 ease-out  md:max-w-5xl">
-      {/* Left Arrow */}
-      {/* <div className="flex items-center rounded border border-scampi-300 transition duration-500 ease-out hover:bg-scampi-950">
-        <Image src={left} height={20} width={20} alt="last version" />
-      </div> */}
-
       {/* Main Article */}
       <article
         className="flex w-full flex-col items-center justify-between rounded border border-scampi-300 p-4 transition duration-500 ease-out hover:bg-scampi-950"
@@ -64,7 +64,7 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
 
           <audio src={url} controls className="h-6"></audio>
 
-          <div
+          <button
             className="flex items-center gap-1"
             onClick={() => setShowNotes(!showNotes)}
           >
@@ -75,7 +75,7 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
               width={20}
               alt="more info"
             ></Image>
-          </div>
+          </button>
         </div>
         {/* Notes Section */}
         {showNotes && (
@@ -85,11 +85,6 @@ const Song: NextPage<Song> = ({ id, fileName, url }) => {
           </div>
         )}
       </article>
-
-      {/* Right Arrow */}
-      {/* <div className="flex items-center rounded border p-1 border-scampi-400 transition duration-500 ease-out hover:bg-scampi-950">
-        <Image src={plus} height={20} width={20} alt="next version" />
-      </div> */}
     </div>
   );
 };
